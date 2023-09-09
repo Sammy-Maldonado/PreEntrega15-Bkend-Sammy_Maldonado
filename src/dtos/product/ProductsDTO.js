@@ -1,3 +1,5 @@
+import __dirname from "../../utils.js";
+
 class CreateProductDTO {
   constructor(product, user) {
     this.title = product.title,
@@ -8,6 +10,18 @@ class CreateProductDTO {
     this.category = product.category,
     this.thumbnails = product.thumbnails,
     this.owner = user.email
+  }
+}
+
+class CreateProductWithImageDTO {
+  constructor(product, file) {
+    this.title = product.title,
+    this.description = product.description,
+    this.price = product.price,
+    this.code = product.code,
+    this.stock = product.stock,
+    this.category = product.category,
+    this.thumbnails = [`${__dirname}/public/images/${file.filename}`]
   }
 }
 
@@ -28,5 +42,6 @@ class GetProductsDTO {
 
 export default {
   CreateProductDTO,
-  GetProductsDTO
+  GetProductsDTO,
+  CreateProductWithImageDTO
 }

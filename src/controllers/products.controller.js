@@ -122,18 +122,11 @@ const createProductWithImage = async(req,res) => {
   const {title, description, price, code, stock, category, thumbnails} = req.body;
   if(!title || !description || !price || !code || !stock || !category || thumbnails) return res.status(400).send({status:"error",error:"Incomplete values"})
   console.log(file);
-  const product = {
-    title,
-    description,
-    price,
-    code,
-    stock,
-    category,
-    thumbnails:[`${__dirname}/public/images/${file.filename}`]
-  };
+  const productDTO = new ProductsDTO.CreateProductWithImageDTO(req.body, file);
+  const product = { ...productDTO };
   console.log(product);
   const result = await productsService.createProduct(product);
-  res.send({status:"success", payload:result})
+  res.send({status:"success", message:`Su producto '${product.title}' ha sido creado con exito`, payload:result})
 }
 
 export default {
