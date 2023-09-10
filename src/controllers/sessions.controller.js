@@ -24,13 +24,15 @@ const register = async (req, res) => {
 
 }
 
-const loginWithToken = async (req, res) => {
+const loginWithToken = async (req, res, next) => {
   const user = req.user;
-  // Actualizando la propiedad "last_connection" con la fecha y hora actual cuando el user se loguea.
-  user.last_connection = moment().tz('America/Santiago').format('DD/MM/YYYY[, a las] HH:mm:ss [GMT]ZZ');
+  if (user.role === 'user') {
+    // Actualizando la propiedad "last_connection" con la fecha y hora actual cuando el user se loguea.
+    user.last_connection = moment().tz('America/Santiago').format('DD/MM/YYYY[, a las] HH:mm:ss [GMT]ZZ');
 
-  //Actualizo al usuario en la base de datos
-  const newUser = await usersService.updateUser(user.id, user)
+    //Actualizo al usuario en la base de datos
+    const newUser = await usersService.updateUser(user.id, user)
+  } next();
 
   try {
     const token = generateToken(req.user);
