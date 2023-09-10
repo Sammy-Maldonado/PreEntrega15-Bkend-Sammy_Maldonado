@@ -102,27 +102,32 @@ const deleteUser = async (req, res) => {
   }
 }
 
-const updateUserData = async (req, res) => {    //terminar el updateUserData
+const updateUserData = async (req, res) => {
   try {
-    const file = req.file;
-    const userId = req.params.pId;
-    const userToUpdate = req.body;
-    //Verificando que el usuario exista en la base de datos
-    const userExists = await usersService.getUserById(userId);
-    if (!userExists) {
-      return res.status(404).send({ status: "error", message: "Usuario no encontrado, por favor, ingrese una ID válida" });
+    const files = req.files;
+    const userId = req.params.uId;
+    const user = await usersService.getUserById(userId);
+    console.log(files);
+    if (!user) {
+      return res.status(404).send({ status: 'error', error: 'Usuario no encontrado, por favor, ingrese una ID válida' });
     }
-    console.log(file);
-    /*   const productDTO = new ProductsDTO.CreateProductWithImageDTO(req.body, file);
-      const product = { ...productDTO };
-      console.log(product);
-      const result = await productsService.createProduct(product);
-      res.send({status:"success", message:`Su producto '${product.title}' ha sido creado con exito`, payload:result}) */
-  } catch (error) {
-    console.log(error);
-  }
 
-}
+    // Obteniendo la información de los archivos cargados y agregandolos al array "documents"
+    const documents = user.documents || []; // Se obtiene el array de documentos existente o se crea uno nuevo
+    files.forEach((file) => {
+      documents.push({ name: file.originalname, reference: file.filename });
+    });
+
+    // Actualizando el usuario en la base de datos con el nuevo array "documents"
+    const updatedUser = await usersService.updateUser(userId, { documents });
+    const newUser = await usersService.getUserBy(updatedUser._id);
+
+    res.status(200).send({ status: 'success', message: 'Archivo cargado con éxito', payload: newUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ status: 'error', error: 'Error interno del servidor' });
+  }
+};
 
 export default {
   getUsers,
