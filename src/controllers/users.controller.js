@@ -61,38 +61,47 @@ const changeUserRole = async (req, res) => {
   try {
     const userId = req.params.uId;
     const user = await usersService.getUserById(userId);
-
+  
     if (!user) {
       return res.status(404).send({ status: 'error', error: 'Usuario no encontrado, por favor, ingrese una ID válida' });
     }
-
+  
+    // Verificando si el usuario es "premium" y quiere cambiar a "user"
+    if (user.role === 'premium') {
+      // Cambiando el rol del usuario a "user" y estableciendo el status como false
+      user.role = 'user';
+      user.status = false;
+  
+      // Actualizando el usuario en la base de datos
+      const updatedUser = await usersService.updateUser(userId, user);
+      const newUserRole = await usersService.getUserById(userId);
+  
+      return res.status(200).send({ status: 'success', message: 'Rol de usuario actualizado con éxito', payload: newUserRole });
+    }
+  
     // Verificando si los documentos han sido cargados
-    if (!user.documents || user.documents.length <= 3) {
+    if (!user.documents || user.documents.length < 3) {
       return res.status(400).send({ status: 'error', error: 'El usuario no ha cargado los 3 documentos requeridos' });
     }
-
+  
     // Verificando que los documentos sean los correctos
     const requiredDocuments = ['Identificación', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'];
-
+  
     const uploadedDocuments = user.documents.map((doc) => doc.reference);
     const missingDocuments = requiredDocuments.filter((doc) => !uploadedDocuments.includes(doc));
-
+  
     if (missingDocuments.length > 0) {
       return res.status(400).send({ status: 'error', error: `Faltan los siguientes documentos: ${missingDocuments.join(', ')}` });
     }
-
-    // Cambiando el rol del usuario despues que se entregan los documentos necesarios
-      user.role = user.role === 'user' ? 'premium' : 'user';
-      if (user.role === 'premium') {
-        user.status = 'true'
-      } else {
-        user.status = 'false'
-      }
-
+  
+    // Cambiando el rol del usuario después que se entregan los documentos necesarios
+    user.role = 'premium';
+    user.status = true;
+  
     // Actualizar el usuario en la base de datos
     const updatedUser = await usersService.updateUser(userId, user);
     const newUserRole = await usersService.getUserById(userId);
-
+  
     res.status(200).send({ status: 'success', message: 'Rol de usuario actualizado con éxito', payload: newUserRole });
   } catch (error) {
     console.error(error);
