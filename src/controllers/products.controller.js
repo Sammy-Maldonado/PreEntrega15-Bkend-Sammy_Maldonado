@@ -126,7 +126,7 @@ const createProductWithImage = async(req,res) => {
   const product = { ...productDTO };
   console.log(product);
   const result = await productsService.createProduct(product);
-  res.send({status:"success", message:`Su producto '${product.title}' ha sido creado con exito`, payload:result})
+  res.send({status:"success", message:`Su producto '${product.title}' ha sido creado con exito`, payload:result});
 }
 
 export default {

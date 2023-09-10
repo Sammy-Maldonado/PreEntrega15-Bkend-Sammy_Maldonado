@@ -50,7 +50,7 @@ const updateUser = async (req, res) => {
     const result = await usersService.updateUser(userId, userToUpdate)
     const newUser = await usersService.getUserById(userId)
     console.log(result);
-    res.send({ status: "success", message: "Usuario actualizado con éxito", payload: newUser})
+    res.send({ status: "success", message: "Usuario actualizado con éxito", payload: newUser })
   } catch (error) {
     console.log(error);
     res.status(400).send('Usuario no encontrado')
@@ -85,7 +85,7 @@ const deleteUser = async (req, res) => {
     const userId = req.params.uId;
 
     const userToDelete = await usersService.getUserById(userId);
-    if(!userToDelete) {
+    if (!userToDelete) {
       return res.status(404).send({ status: "error", message: "Usuario no encontrado, por favor, ingrese una ID válida" })
     }
 
@@ -102,11 +102,34 @@ const deleteUser = async (req, res) => {
   }
 }
 
+const updateUserData = async (req, res) => {    //terminar el updateUserData
+  try {
+    const file = req.file;
+    const userId = req.params.pId;
+    const userToUpdate = req.body;
+    //Verificando que el usuario exista en la base de datos
+    const userExists = await usersService.getUserById(userId);
+    if (!userExists) {
+      return res.status(404).send({ status: "error", message: "Usuario no encontrado, por favor, ingrese una ID válida" });
+    }
+    console.log(file);
+    /*   const productDTO = new ProductsDTO.CreateProductWithImageDTO(req.body, file);
+      const product = { ...productDTO };
+      console.log(product);
+      const result = await productsService.createProduct(product);
+      res.send({status:"success", message:`Su producto '${product.title}' ha sido creado con exito`, payload:result}) */
+  } catch (error) {
+    console.log(error);
+  }
+
+}
+
 export default {
   getUsers,
   getUserById,
   addUsers,
   updateUser,
   changeUserRole,
-  deleteUser
+  deleteUser,
+  updateUserData
 }

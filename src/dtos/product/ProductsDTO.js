@@ -21,7 +21,7 @@ class CreateProductWithImageDTO {
     this.code = product.code,
     this.stock = product.stock,
     this.category = product.category,
-    this.thumbnails = [`${__dirname}/public/images/${file.filename}`]
+    this.thumbnails = [`${__dirname}/public/products/${file.filename}`]
   }
 }
 

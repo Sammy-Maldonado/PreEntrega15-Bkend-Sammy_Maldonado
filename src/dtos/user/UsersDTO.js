@@ -6,7 +6,8 @@ class RegisterUserDTO {
       this.email = user.email,
       this.age = user.age,
       this.role = user.role,
-      this.password = hashedPassword
+      this.password = hashedPassword,
+      this.documents = user.documents 
   }
 }
 
@@ -24,8 +25,11 @@ class PassportUserDTO {
     this.id = user._id,
       this.name = user.name,
       this.email = user.email,
+      this.age = user.age,
       this.role = user.role,
-      this.orders = user.orders
+      this.orders = user.orders,
+      this.documents = user.documents,
+      this.last_connection = user.last_connection
   }
 }
 

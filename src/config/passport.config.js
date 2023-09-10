@@ -15,7 +15,7 @@ let hashedPassword;
 const initializePassportStrategies = () => {
   passport.use('register', new LocalStrategy({ passReqToCallback: true, usernameField: 'email' }, async (req, email, password, done) => {
     try {
-      const { first_name, last_name, role, age } = req.body;
+      const { first_name, last_name, age, role } = req.body;
 
       //Verificando que el usuario no exista en la base de datos
       const exist = await usersService.getUserBy({ email });

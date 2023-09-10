@@ -12,7 +12,7 @@ import productsRouter from './routes/products.router.js';
 import cartsRouter from './routes/carts.router.js';
 import SessionsRouter from './routes/sessions.router.js';
 import ordersRouter from './routes/orders.router.js'
-import usersRouter from './routes/users.Router.js'
+import usersRouter from './routes/users.router.js'
 
 import registerChatHandler from './listeners/chatHandler.js';
 import initializePassportStrategies from './config/passport.config.js';
