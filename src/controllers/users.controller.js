@@ -66,8 +66,28 @@ const changeUserRole = async (req, res) => {
       return res.status(404).send({ status: 'error', error: 'Usuario no encontrado, por favor, ingrese una ID válida' });
     }
 
-    // Cambiar el rol del usuario
-    user.role = user.role === 'user' ? 'premium' : 'user';
+    // Verificando si los documentos han sido cargados
+    if (!user.documents || user.documents.length <= 3) {
+      return res.status(400).send({ status: 'error', error: 'El usuario no ha cargado los 3 documentos requeridos' });
+    }
+
+    // Verificando que los documentos sean los correctos
+    const requiredDocuments = ['Identificación', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'];
+
+    const uploadedDocuments = user.documents.map((doc) => doc.reference);
+    const missingDocuments = requiredDocuments.filter((doc) => !uploadedDocuments.includes(doc));
+
+    if (missingDocuments.length > 0) {
+      return res.status(400).send({ status: 'error', error: `Faltan los siguientes documentos: ${missingDocuments.join(', ')}` });
+    }
+
+    // Cambiando el rol del usuario despues que se entregan los documentos necesarios
+      user.role = user.role === 'user' ? 'premium' : 'user';
+      if (user.role === 'premium') {
+        user.status = 'true'
+      } else {
+        user.status = 'false'
+      }
 
     // Actualizar el usuario en la base de datos
     const updatedUser = await usersService.updateUser(userId, user);
@@ -114,12 +134,24 @@ const updateUserData = async (req, res) => {
 
     // Obteniendo la información de los archivos cargados y agregandolos al array "documents"
     const documents = user.documents || []; // Se obtiene el array de documentos existente o se crea uno nuevo
-    files.forEach((file) => {
-      documents.push({ name: file.originalname, reference: file.filename });
+
+    const requiredReferences = ['Identificación', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'];
+    files.forEach((file, index) => {
+      const reference = index < requiredReferences.length ? requiredReferences[index] : file.originalname;
+      documents.push({ name: file.originalname, reference: reference });
     });
 
+    // Verificar si se han cargado los tres documentos requeridos
+    const uploadedReferences = documents.map((doc) => doc.reference);
+    const hasRequiredDocuments = requiredReferences.every((docRef) => uploadedReferences.includes(docRef));
+
+    // Actualizar el estado del usuario si se han cargado los tres documentos
+    if (hasRequiredDocuments) {
+      user.status = true;
+    }
+
     // Actualizando el usuario en la base de datos con el nuevo array "documents"
-    const updatedUser = await usersService.updateUser(userId, { documents });
+    const updatedUser = await usersService.updateUser(userId, { documents, status: user.status });
     const newUser = await usersService.getUserBy(updatedUser._id);
 
     res.status(200).send({ status: 'success', message: 'Archivo cargado con éxito', payload: newUser });

@@ -23,6 +23,10 @@ const schema = new mongoose.Schema({
       ref:'Orders'
     }
   ],
+  status: {
+    type: Boolean,
+    default: false
+  },
   documents: [
     {
       name: String,

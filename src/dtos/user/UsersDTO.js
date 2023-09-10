@@ -28,6 +28,7 @@ class PassportUserDTO {
       this.age = user.age,
       this.role = user.role,
       this.orders = user.orders,
+      this.status = user.status,
       this.documents = user.documents,
       this.last_connection = user.last_connection
   }
