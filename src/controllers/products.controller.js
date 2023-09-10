@@ -119,10 +119,11 @@ const deleteProduct = async (req, res) => {
 
 const createProductWithImage = async(req,res) => {
   const file = req.file;
+  const folder = "products"
   const {title, description, price, code, stock, category, thumbnails} = req.body;
   if(!title || !description || !price || !code || !stock || !category || thumbnails) return res.status(400).send({status:"error",error:"Incomplete values"})
   console.log(file);
-  const productDTO = new ProductsDTO.CreateProductWithImageDTO(req.body, file);
+  const productDTO = new ProductsDTO.CreateProductWithImageDTO(req.body, file, folder);
   const product = { ...productDTO };
   console.log(product);
   const result = await productsService.createProduct(product);

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authRoles, passportCall } from "../services/auth.js";
 import usersController from "../controllers/users.controller.js";
-import { uploadPImg, uploadDocuments } from "../services/uploader.js";
+/* import uploader from "../services/uploader.js"; */
 
 const router = Router();
 

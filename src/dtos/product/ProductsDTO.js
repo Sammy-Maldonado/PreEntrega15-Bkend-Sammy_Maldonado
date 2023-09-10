@@ -14,14 +14,14 @@ class CreateProductDTO {
 }
 
 class CreateProductWithImageDTO {
-  constructor(product, file) {
+  constructor(product, file, folder) {
     this.title = product.title,
     this.description = product.description,
     this.price = product.price,
     this.code = product.code,
     this.stock = product.stock,
     this.category = product.category,
-    this.thumbnails = [`${__dirname}/public/products/${file.filename}`]
+    this.thumbnails = [`${__dirname}/public/${folder}/${file.filename}`]
   }
 }
 
